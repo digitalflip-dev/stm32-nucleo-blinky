@@ -3,7 +3,7 @@
 #![no_std]
 
 use cortex_m_rt::entry;
-use cortex_m::delay::Delay;
+//use cortex_m::delay::Delay;
 
 use hal::{
     self,
@@ -24,7 +24,7 @@ use panic_probe as _;
 fn main() -> ! {
 
     // Set up CPU peripherals
-    let cp = cortex_m::Peripherals::take().unwrap();
+    //let cp = cortex_m::Peripherals::take().unwrap();
 
     // Set up microcontroller peripherals
     let _dp = pac::Peripherals::take().unwrap();
@@ -35,18 +35,25 @@ fn main() -> ! {
     clock_cfg.setup().unwrap();
     
     // Setup a delay based on Cortex-M systick
-    let mut delay = Delay::new(cp.SYST,  clock_cfg.systick());
+    //let mut delay = Delay::new(cp.SYST,  clock_cfg.systick());
 
+    // The user button B1 is connected to Pin PC13
+    let button = Pin::new(Port::C, 13, PinMode::Input);
     
+    // The onboard LED LD2 is connected to Pin PA5
     let mut led = Pin::new(Port::A, 5, PinMode::Output);
 
     led.set_low();
     
     loop {
-        led.set_high();
+        // check if button was pressed
+        if button.is_low() {
+            led.toggle();
+        }
+        /*led.set_high();
         delay.delay_ms(200);
         led.set_low();
-        delay.delay_ms(200);
+        delay.delay_ms(200); */
     }
 }
 
